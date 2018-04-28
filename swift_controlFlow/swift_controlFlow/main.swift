@@ -65,6 +65,70 @@ for tickMark in stride(from: 0, to: 60, by: minutesInterval) {
 //
 //} while condition
 
+// 使用while循环计算阶乘
+var fac = 1
+var index = 1
+while index <= 5 {
+    fac *= index
+    index += 1
+}
+print("while循环计算5的阶乘：\(fac)")
+
+// 使用repeat-while循环计算阶乘
+fac = 1
+index = 1
+repeat {
+    fac *= index
+    index += 1
+} while index <= 5
+print("repeat-while循环计算5的阶乘：\(fac)")
+
+
+// 条件语句
+
+// if语句 - (代码略)
+// if、if-else、if - else if - else 条件判断都可以不用添加括号
+
+// switch多分支语句-(与C的switch语句相比较，Swift的switch功能非常强大)
+// switch 语句会将一个值与多个可能的模式匹配。然后基于第一个成功匹配的模式来执行合适的代码块。
+// switch 语句代替 if 语句提供了对多个潜在状态的响应。
+
+// switch语句的普通用法
+// Swift中的switch语句是没有隐式贯穿的，不需要添加break
+let number = 1
+switch number {
+case 1:
+    print("number is \(number)")
+case 2:
+    print("number is \(number)")
+default:
+    print("没有你想要的案例")
+}
+
+// switch区间匹配
+// switch情况的值可以在一个区间中匹配。
+let score = 95
+switch score {
+case 0..<60:
+    print("不及格!!!")
+case 60...70:
+    print("及格")
+case 70...80:
+    print("良好")
+case 90...100:
+    print("优秀")
+default:
+    print("没有等级!")
+}
+
+
+
+
+
+
+
+
+
 
 
 
