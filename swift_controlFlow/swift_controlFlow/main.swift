@@ -121,12 +121,108 @@ default:
     print("没有等级!")
 }
 
+// 元组：你可一使用元组来匹配switch中的多个值
+// 每个元组都可以与不同的值或者区间值来匹配，使用'_'来代表可以匹配任意值
+// 与 C 不同，Swift 允许多个 switch 情况来判断相同的值。
+let somePoint = (1, 3)
+switch somePoint {
+case (0, 1):
+    print("元组匹配：\(somePoint)")
+case (_, 1):
+    print("元组匹配：\(somePoint)")
+//case (1, 3):
+//    print("元组匹配：\(somePoint)")
+case (0...3, 3..<6):
+    print("元组区间匹配：\(somePoint)")
+default:
+    print("没有你相匹配的元组")
+}
+
+// switch 值绑定
+// switch 情况可以匹配到的值临时绑定为一个常量或者变量
+let anotherPoint = (2, 5)
+switch anotherPoint {
+case (let x, 5):
+    print("值绑定：x = \(x)")
+case (3, let y):
+    print("值绑定：y = \(y)")
+default:
+    print("值绑定：没有匹配到值")
+}
+// case (let x, 5):
+// 值绑定：元组anotherPoint里面匹配值，会匹配到y = 5的值，然后将anotherPoint的x赋值给临时变量x
+// case (3, let y):
+// 值绑定：元组anotherPoint里面匹配值，会匹配到x = 3的值，然后将anotherPoint的y赋值给临时变量y
 
 
+// switch where -> 特别的一个特性
+let yetAnotherPoint = (6, 2)
+switch yetAnotherPoint {
+case (let x, 3) where x > 4:
+    print("Switch Where: x = \(x)")
+case (3, let y) where y < 4:
+    print("Switch Where: y = \(y)")
+default:
+    print("where没有匹配到值")
+}
 
 
+// switch case复合情况
+// 多个 switch 共享同一个函数体的多个情况可以在 case 后写多个模式来复合，在每个模式之间用逗号分隔。
+// 如果任何一个模式匹配了，那么这个情况都会被认为是匹配的。
+let someCharacter = "e"
+switch someCharacter {
+case "h", "e", "l", "o":
+    print("复合情况：\(someCharacter)")
+case "w", "q":
+    print("复合情况：\(someCharacter)")
+default:
+    print("复合情况没有匹配到值")
+}
+// case "h", "e", "l", "o": 在此case中，someCharater匹配到了"e"，所以就会执行当前case
+// 同样复合情况也可以进行值绑定
+switch yetAnotherPoint {
+case (let v, 2), (6, let v):
+    print("复合情况的值绑定：\(v)")
+default:
+    print("复合情况的值绑定：没有匹配")
+}
 
 
+// 控制转移语句
+// continue: 在循环中使用，告诉循环体结束本地循环开始进行下一次循环（跳过本地循环而不是结束循环）。
+// break: 在循环中使用，跳出循环体结束剩下的循环；在switch-case中使用，提前结束switch-case
+// fallthrough: 在switch-case中，使case具备C语言的穿透效果
+// return: 函数返回值，结束函数
+// throw: 抛出函数错误
+
+// 语句标签
+// https://www.jianshu.com/p/367ccb3303a4
+
+
+// 提前退出
+// guard 语句
+// 类似if语句，基于布尔值表达式来执行语句。
+// 使用 guard 语句来要求一个条件必须是真才能执行 guard 之后的语句。
+// 与 if 语句不同， guard 语句总是有一个 else 分句—— else 分句里的代码会在条件不为真的时候执行。
+func _sqrt(x:Double) -> Double {
+    guard x >= 0 else {
+        print("负数没有平方根!")
+        return 0;
+    }
+    
+    return sqrt(x);
+}
+// 执行函数
+let a:Double = -4
+print("_sqrt(\(a)) = \(_sqrt(x: a))")
+
+// 检测API的可用性
+if #available(macOS 10.13, *) {
+    print("macOS 10.13")
+} else {
+    print("macOS 版本不对")
+}
 
 
 
