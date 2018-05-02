@@ -256,6 +256,7 @@ if let divValue = divf(x: 8, y: 4, info: __log(_:)) {   // 传入函数类型：
 // 使用内嵌函数重写除法函数
 func fdiv(x: Double, y: Double) -> Double? {
     guard y != Double(0) else {
+        // 在函数内部定义一个函数
         func div_log(_ string: String) {
             print(string)
         }
