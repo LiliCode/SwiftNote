@@ -31,6 +31,9 @@ func initMap(row: Int8, col: Int8) -> MapType {
     return map
 }
 
+/// 显示地图函数
+///
+/// - Parameter map: 地图
 func showMap(map: MapType) {
     for rows in map {
         print(rows)
@@ -43,7 +46,7 @@ func showMap(map: MapType) {
 
 
 
-func main(argc: Int, argv: [Character]?) -> Int {
+func main(argc: Int, argv: String?) -> Int {
     let mapArray = initMap(row: 8, col: 8)
     showMap(map: mapArray)
     
