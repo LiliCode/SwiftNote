@@ -74,14 +74,82 @@ print(list)
 // ## 当把闭包作为行内闭包表达式传递给函数，形式参数类型和返回类型都可以被推断出来。所以说，当闭包被用作函数的实际参数时你都不需要用完整格式来书写行内闭包。
 
 
+// 尾随闭包
+// 如果你需要将一个很长的闭包表达式作为函数最后一个实际参数传递给函数，使用尾随闭包将增强函数的可读性。
+// 尾随闭包是一个被书写在函数形式参数的括号外面（后面）的闭包表达式：
+func someFunctionThatTakesAClosure(closure:() -> Void) {
+    closure()
+}
+
+someFunctionThatTakesAClosure {
+    print("尾随闭包可以不用写括号!")
+}
 
 
 
+// 闭包做函数参数
+func divf(x: Int, y: Int, resultBlock: (Int) -> Void) -> Void {
+    resultBlock(x / y)
+}
+
+divf(x: 6, y: 2) { (result) in
+    print("result = \(result)")
+}
 
 
+// map(_:) 方法中的尾随闭包
+let numbers = [2, 3, 6]
+let strings = numbers.map { (number) -> String in
+    return String(number)
+}
+print("map(_:)方法的尾随闭包：\(strings)")
 
 
+// 捕获值
+// 闭包能够从上下文中捕获已被定义的常量和变量，即使定义这些常量和变量的作用域不存在了，依然能够在闭包中修改函数体中的这些值。
+func makeIncrementer(forIncrement amount: Int) -> () -> Int {
+    var runningCount = 0
+    let block = {() -> Int in
+        runningCount += 1
+        return runningCount
+    }
+    
+    return block
+}
 
+let block = makeIncrementer(forIncrement: 0)
+let runningCountResult = block()
+print("runningCountResult = \(runningCountResult)") // 1
+print("runningCountResult = \(block())")    // 2
+print("runningCountResult = \(block())")    // 3
+print("runningCountResult = \(block())")    // 4
+
+// 闭包是引用类型
+// 无论你什么时候赋值一个函数或者闭包给常量或者变量，你实际上都是将常量和变量设置为对函数和闭包的引用。
+
+// 逃逸闭包
+// 当一个闭包作为一个实际参数传递给一个函数时，我们就说这个闭包逃逸了，因为它可以在函数返回之后被调用。
+// 当你声明一个接受闭包作为形式参数的函数时，你可以在形式参数前写 @escaping 来明确闭包是允许逃逸的。
+// 逃逸闭包的理解：https://www.jianshu.com/p/6c6ab0f67308
+func someFunctionWithEscapingClosure(completionHandler: @escaping () -> Void) -> Void {
+    
+}
+
+// 自动闭包
+// 闭包作为参数传递给函数时，可以将闭包定义为自动闭包（使用关键字@autoclosure）。
+// 这样传递参数时，可以直接传递一段代码（或者一个变量、表达式），系统会自动将这段代码转化成闭包。
+// 需要注意：过度使用 @autoclosures 会让你的代码变得难以理解。
+
+func someFunctionWithAutoclosure(completionHandler: @autoclosure () -> Void) -> Void {
+    completionHandler()
+}
+
+someFunctionThatTakesAClosure(closure: { print("自动闭包") })
+
+// 如果你想要自动闭包允许逃逸，就同时使用 @autoclosure 和 @escaping 标志。
+func someFunctionWithAutoclosureAndEscaping(completionHandler: @autoclosure @escaping () -> Void) -> Void {
+    // 逃逸和自动闭包
+}
 
 
 
