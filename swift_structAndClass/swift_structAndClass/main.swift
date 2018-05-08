@@ -31,10 +31,38 @@ import Foundation
 // 注意：结构体类型是通过值复制来传递，并且不会使用引用计数
 
 
+// 语法:
+// 使用struct定义一个结构体
+// 使用class定义一个类
 
+//struct <#name#> {
+//    <#fields#>
+//}
 
+//class <#name#>: <#super class#> {
+//    <#code#>
+//}
 
+// 无论你在何时定义类或者结构体你都是在定义一个新的类型
+// 规范：类名和结构体名请使用驼峰命名法，并且首字母大写，例如：UIViewController、NSObject
+// 属性和函数名称首字母小写，例如：var frameRate、  func someFunction() -> Void {}
 
+// 类、结构体定义示例
+
+struct Point {
+    var x: Double
+    var y: Double
+    // 初始化器
+    init(x: Double, y: Double) {
+        self.x = x
+        self.y = y
+    }
+}
+
+class Person: NSObject {
+    var name: String = String()
+    
+}
 
 
 
