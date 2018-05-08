@@ -158,6 +158,16 @@ let result = ArithmeticExpression.mul(sum, _v2)
 print("(6 + 3) * 2 = \(evaluete(result))")
 
 
+enum Direction {
+    case left(x: Double, y: Double)
+    case right(x: Double, y: Double)
+    case top(x: Double, y: Double)
+    case bottom(x: Double, y: Double)
+}
+
+let dir = Direction.left(x: 3.8, y: 4.5)
+print("dir = \(dir)")
+
 
 
 
