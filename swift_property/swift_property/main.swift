@@ -8,7 +8,12 @@
 
 import Foundation
 
-// # 类和结构体 -- 属性 #
+// # 类和结构体 -- 属性、方法、下标 #
+
+
+
+
+// 属性
 
 // 属性可分为存储属性和计算属性
 
@@ -152,6 +157,195 @@ struct SomeStructure {
 
 // 类属性只能有类名使用点语法来访问, 因为类属性不属于对象
 print("类属性：\(SomeStructure.sortedTypeProperty)")
+
+
+
+// 方法
+
+// 方法关联了特定的函数，类、结构体、枚举都能定义对象方法，方法封装了特定的任务和功能。类、结构体、枚举同样能定义类方法，这是与类本身关联的方法。
+// 对象方法和类方法和Objc相似
+
+// ## 枚举添加方法测试
+enum Device {
+    case iPhone_X, iPhone_8, iPhone_8_plus, iPhone_7, iPhone_7_plus
+    
+    // 类方法
+    static func getSize(deive: Device) -> Size {
+        switch deive {
+        case .iPhone_7, .iPhone_8:
+            return Size(width: 375.0, height: 667.0)
+        case .iPhone_7_plus, .iPhone_8_plus:
+            return Size(width: 414.0, height: 736.0)
+        case .iPhone_X:
+            return Size(width: 375.0, height: 812.0)
+        default:
+            return Size(width: 320.0, height: 568.0)
+        }
+    }
+}
+
+print("\(Device.getSize(deive: Device.iPhone_8_plus))")
+
+
+
+// 对象方法: 属于类的实例对象，用实例对象去调用
+
+// 例如：
+
+class NavigationController {
+    
+}
+
+class ViewController {
+    var navigationController: NavigationController?
+    
+    func viewDidLoad() -> Void {
+        print("viewDidLoad")
+    }
+    
+    func viewWillAppear() -> Void {
+        print("viewWillAppear")
+    }
+}
+
+let controller = ViewController()
+controller.viewDidLoad()
+controller.viewWillAppear()
+
+
+// 例如：
+
+/// 计数器类
+class Counter {
+    var count: Int = 0
+    
+    func increment() {
+        count += 1
+    }
+    
+    func increment(by ammout: Int) {
+        count += ammout
+    }
+    
+    func reset() -> Void {
+        count = 0
+    }
+}
+
+var c = Counter()
+c.increment()
+c.increment(by: 9)
+print("计数器当前值:\(c.count)")
+c.reset()
+print("计数器当前值:\(c.count)")
+
+
+// self 属性
+// 相当于Objc中的self指针，self就是当前对象指针，就是当前对象
+// self 也可以省略
+
+
+// 在实例方法中修改值类型
+// 结构体和枚举都是值类型，默认情况下，在自身的对象方法中不能修改值类型属性
+// 如果要修改就必须在方法前面添加 mutating 修饰
+
+struct Value {
+    var value: Int = 0
+    
+    // 你可以选择在 func关键字前放一个 mutating关键字来使用这个行为
+    mutating func update(_ value: Int) -> Void {
+//        self.value = value // 没添加mutating 编译错误，Cannot assign to property: 'self' is immutable，意为不能修改值类型属性
+        self.value = value  // 添加了 mutating 修饰，就可以修改自身值类型属性了
+    }
+}
+
+var v = Value()
+v.update(8)
+print(v.value)
+
+
+// 在异变方法里指定自身
+// 异变方法可以指定整个实例给隐含的 self属性。
+
+// 例如：
+
+enum SwitchState {
+    case off, low, high
+    
+    mutating func next() -> SwitchState {
+        switch self {
+        case .off:
+            self = .low
+        case .low:
+            self = .high
+        default:
+            self = .off
+        }
+        
+        return self
+    }
+    
+    static func display(_ state: SwitchState) -> Void {
+        if state == SwitchState.off {
+            return
+        }
+        
+        print(state)
+        
+        var stt = state
+        self.display(stt.next())
+    }
+}
+
+SwitchState.display(SwitchState.low)
+
+
+
+// 类方法
+// 类方法属于这个类，不属于这个类的对象，使用类名去调用
+// 你可以通过在 func关键字之前使用 static关键字来明确一个类型方法。类同样可以使用 class关键字来允许子类重写父类对类型方法的实现。
+// 类方法中的self指向类本身，对象方法中的self指向对象本身
+
+// 例如：
+
+
+
+
+
+// 下标
+
+
+// 类、结构体和枚举可以定义下标，它可以作为访问集合、列表或序列成员元素的快捷方式。你可使用下标通过索引值来设置或检索值而不需要为设置和检索分别使用实例方法。
+
+// 下标的语法
+// 下表脚本允许你通过在实例名后面的方括号内写一个或多个值对该类的实例进行查询。它的语法类似于实例方法的计算属性。
+// 使用关键字 subscript 来定义下标，并且指定一个或多个输入形式参数和返回类型，与实例方法一样。与实例方法不同的是，下标可以是读写也可以是只读的。
+// 这个行为通过与计算属性中相同的 getter 和 setter 传达：
+
+struct List {
+    var list: [Int] = Array()
+    
+    subscript(index: Int) -> Int? {
+        get {
+            if index > list.count - 1  {
+                return nil
+            }
+            
+            return list[index]
+        }
+        
+        set {
+            if newValue != nil {
+                list[index] = newValue!
+            }
+        }
+    }
+}
+
+var table = List(list: [8, 2, 1, 5])
+if let value = table[1] {
+    print("table[1] = \(value)")
+}
 
 
 
