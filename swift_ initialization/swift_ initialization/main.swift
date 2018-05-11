@@ -200,10 +200,18 @@ struct Rect {
 // 指定初始化器和便捷初始化器
 class Computer {
     var name: String?
+    var cpu: String = String()
+    var gpu: String = String()
     
     // 指定初始化器
     init(name: String) {
         self.name = name
+    }
+    
+    init(name: String, cpu: String, gpu: String) {
+        self.name = name
+        self.cpu = cpu
+        self.gpu = gpu
     }
     
     // 便捷初始化器: 使用 convenience 关键字声明
@@ -234,8 +242,119 @@ print(comp.name!)
 // 便捷初始化器必须总是横向委托。
 
 
+// 两段式初始化
+// Swift 的类初始化是一个两段式过程。在第一个阶段，每一个存储属性被引入类为分配了一个初始值。一旦每个存储属性的初始状态被确定，第二个阶段就开始了，每个类都有机会在新的实例准备使用之前来定制它的存储属性。
+//
+// 两段式初始化过程的使用让初始化更加安全，同时在每个类的层级结构给与了完备的灵活性。两段式初始化过程可以防止属性值在初始化之前被访问，还可以防止属性值被另一个初始化器意外地赋予不同的值。
 
 
+// 初始化器的继承和重写
+// 不像在 Objective-C 中的子类，Swift 的子类不会默认继承父类的初始化器。Swift 的这种机制防止父类的简单初始化器被一个更专用的子类继承并被用来创建一个没有完全或错误初始化的新实例的情况发生。
+
+// ##注意: 当重写父类指定初始化器时，你必须写 override 修饰符，就算你子类初始化器的实现是一个便捷初始化器。
+
+class MacBookPro : Computer {
+    var memory: String
+    var memoryCount: UInt
+    
+    override init(name: String, cpu: String, gpu: String) {
+        self.memory = "SAMSUNG DDR4"
+        self.memoryCount = 2048 * 1024 * 1024
+        
+        super.init(name: name, cpu: cpu, gpu: gpu)
+    }
+    
+    convenience init(cpu: String, gpu: String) {
+        self.init(name: "MacBook Pro", cpu: "Intel Core i5 7300U", gpu: "Intel Iris 640 MB")
+    }
+}
+
+
+class Vehicle {
+    var numberOfWheels = 0
+    var description: String {
+        return "\(numberOfWheels) wheel(s)"
+    }
+}
+
+// 使用默认的初始化器
+let vehicle = Vehicle()
+print(vehicle.description)
+
+class Bicycle : Vehicle {
+    // 重写初始化器
+    override init() {
+        super.init()
+        numberOfWheels = 4
+    }
+    
+    init(_ numberOfWheels: Int) {
+        super.init()
+        self.numberOfWheels = numberOfWheels
+    }
+}
+
+let bicycle = Bicycle(6)
+print(bicycle.description)
+
+// ## 注意： 子类可以在初始化时修改继承的变量属性，但是不能修改继承过来的常量属性。
+
+
+// 自动初始化器的继承
+// 如上所述，子类默认不会继承父类初始化器。总之，在特定的情况下父类初始化器是可以被自动继承的。实际上，这意味着在许多场景中你不必重写父类初始化器，只要可以安全操作，你就可以毫不费力地继承父类的初始化器。
+
+
+// 假设你为你子类引入的任何新的属性都提供了默认值，请遵守以下2个规则：
+//
+// 规则1
+// 如果你的子类没有定义任何指定初始化器，它会自动继承父类所有的指定初始化器。
+//
+// 规则2
+// 如果你的子类提供了所有父类指定初始化器的实现——要么是通过规则1继承来的，要么通过在定义中提供自定义实现的——那么它自动继承所有的父类便捷初始化器。
+// 就算你的子类添加了更多的便捷初始化器，这些规则仍然适用。
+
+// 规则2解释：
+// 如果：1、子类重写了父类的所有的指定初始化器 2、规则1（没重写父类指定初始化器） 3、自定义初始化器
+// 那么: 自动继承父类所有的便捷初始化器
+
+class ThinkPadX1: Computer {}
+let think = ThinkPadX1("ThinkPad X1 2018")
+print(think.name!)
+
+
+//可失败初始化器
+//定义类、结构体或枚举初始化时可以失败在某些情况下会管大用。这个失败可能由以下几种方式触发，包括给初始化传入无效的形式参数值，或缺少某种外部所需的资源，又或是其他阻止初始化的情况。
+//
+//为了妥善处理这种可能失败的情况，在类、结构体或枚举中定义一个或多个可失败的初始化器。通过在 init 关键字后面添加问号( init? )来写。
+
+class MateBookPro : Computer {
+    
+    // 可失败的初始化器
+    init?(name: String, cpu: String) {
+        if name.isEmpty || cpu.isEmpty {
+            return nil
+        }
+        
+        super.init(name: name, cpu: cpu, gpu: "NVIDIA MX150")
+    }
+}
+
+if let mate = MateBookPro(name: "", cpu: "Core_i5") {   // 可选值->可选绑定
+    if let name = mate.name {
+        print(name)
+    }
+}
+
+// 可失败的初始化器创建了一个初始化类型的可选值。你通过在可失败初始化器写 return nil 语句，来表明可失败初始化器在何种情况下会触发初始化失败。
+// ##注意: 严格来讲，初始化器不会有返回值。相反，它们的角色是确保在初始化结束时， self 能够被正确初始化。虽然你写了 return nil 来触发初始化失败，但是你不能使用 return 关键字来表示初始化成功了。
+
+// 例如：系统标准库
+//
+if let pi = Double("3.141592654__") {
+    print(pi)
+} else {
+    print("Double(_ : String) 初始化失败")
+}
 
 
 
