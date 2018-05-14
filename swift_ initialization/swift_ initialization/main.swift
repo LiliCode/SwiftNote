@@ -358,6 +358,55 @@ if let pi = Double("3.141592654__") {
 
 
 
+// 重写可失败的初始化器
+
+class MateBookProX : MateBookPro {
+    
+    override init?(name: String, cpu: String) {
+        if name.isEmpty && cpu.isEmpty {
+            return nil
+        }
+        
+        super.init(name: name, cpu: cpu)
+        self.name = name
+        self.cpu = cpu
+    }
+}
+
+if let mateBookX = MateBookProX(name: "MateBook Pro X", cpu: "Core i7") {
+    print(mateBookX.name!)
+}
+
+
+// 可失败初始化器 init!
+// 通常来讲我们通过在 init 关键字后添加问号 ( init? )的方式来定义一个可失败初始化器以创建一个合适类型的可选项实例。另外，你也可以使用可失败初始化器创建一个隐式展开具有合适类型的可选项实例。通过在 init 后面添加惊叹号( init! )是不是问号。
+//
+// 你可以在 init? 初始化器中委托调用 init! 初始化器，反之亦然。 你也可以用 init! 重写 init? ，反之亦然。 你还可以用 init 委托调用 init! ，尽管当 init! 初始化器导致初始化失败时会触发断言。
+
+
+// 必要初始化器
+// 在类的初始化器前添加 required 修饰符来表明所有该类的子类都必须实现该初始化器
+
+class SomeClass {
+    required init() {
+        // required 表明该类的所有派生类都必须实现该初始化器
+    }
+}
+
+//当子类重写父类的必要初始化器时，必须在子类的初始化器前同样添加 required 修饰符以确保当其它类继承该子类时，该初始化器同为必要初始化器。在重写父类的必要初始化器时，不需要添加 override 修饰符：
+
+class SomeSubclass: SomeClass {
+    required init() {
+        // subclass implementation of the required initializer goes here
+    }
+}
+
+
+
+
+
+
+
 
 
 
