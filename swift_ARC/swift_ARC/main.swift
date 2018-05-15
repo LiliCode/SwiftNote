@@ -173,14 +173,91 @@ apartment = nil
 
 
 
+// 无主引用和隐式展开的可选属性
+
+
+class Country {
+    let name: String
+    var capitalCity: City!  // 隐式展开可选项
+    
+    init(name: String, city: String) {
+        self.name = name
+        self.capitalCity = City(name: city, country: self)
+    }
+    
+    deinit {
+        print("Country deinit.")
+    }
+}
+
+class City {
+    let name: String
+    unowned let country: Country
+    
+    init(name: String, country: Country) {
+        self.name = name
+        self.country = country
+    }
+    
+    deinit {
+        print("City deinit.")
+    }
+}
+
+var country : Country? = Country(name: "China", city: "Beijing")
+print("country = \(country!.name)  country.capitalCity.name = \(country!.capitalCity.name)")
+
+country = nil
 
 
 
+// 闭包的循环强引用
+
+// 解决闭包的循环强引用
+// 你可以通过定义捕获列表作为闭包的定义来解决在闭包和类实例之间的循环强引用。捕获列表定义了当在闭包体里捕获一个或多个引用类型的规则。正如在两个类实例之间的循环强引用，声明每个捕获的引用为弱引用或无主引用而不是强引用。应当根据代码关系来决定使用弱引用还是无主引用。
+
+// 定义捕获列表
+// 捕获列表中的每一项都由 weak 或 unowned 关键字与类实例的引用（如 self ）或初始化过的变量（如 delegate = self.delegate! ）成对组成。这些项写在方括号中用逗号分开。
+
+class HTMLElement {
+    let name: String
+    let text: String?
+    
+    lazy var asHTML: () -> String? = {
+//        [unowned self] in     // 无主引用
+        [weak self] in  // 弱引用
+        if let weakSelf = self {
+            if let text = weakSelf.text {
+                return "<\(weakSelf.name)>\(text)</\(weakSelf.name)>"
+            } else {
+                return "<\(weakSelf.name)/>"
+            }
+        }
+        
+        return nil
+    }
+    
+    init(name: String, text: String) {
+        self.name = name
+        self.text = text
+    }
+    
+    deinit {
+        print("HTMLElement deinit.")
+    }
+}
 
 
+var element: HTMLElement? = HTMLElement(name: "Stream", text: "字符串流数据")
+if let e = element {
+    if let asHTMLString = e.asHTML() {
+        print(asHTMLString)
+    } else {
+        print("element is nil")
+    }
+}
 
-
-
+element = nil
 
 
 
